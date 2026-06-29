@@ -1,0 +1,48 @@
+{
+  "organization": {
+    "id": 1,
+    "name": "HelpDunya_Bremen",
+    "active": true
+  },
+  "donors": [
+    {
+      "id": 101,
+      "organization_id": 1,
+      "first_name": "Jim",
+      "last_name": "Vahedi",
+      "email": "jim@example.com",
+      "total_donated": 793.0
+    },
+    {
+      "id": 102,
+      "organization_id": 1,
+      "first_name": "Javad",
+      "last_name": "Vahedi",
+      "email": "javahedi@example.com",
+      "total_donated": 376.0
+    }
+  ],
+  "transactions": [
+    {
+      "id": 5001,
+      "donor_id": 101,
+      "organization_id": 1,
+      "amount": 550.0,
+      "method": "Online"
+    },
+    {
+      "id": 5002,
+      "donor_id": 102,
+      "organization_id": 1,
+      "amount": 376.0,
+      "method": "Online"
+    },
+    {
+      "id": 5003,
+      "donor_id": 101,
+      "organization_id": 1,
+      "amount": 243.0,
+      "method": "Cash"
+    }
+  ]
+}

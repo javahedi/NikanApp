@@ -31,48 +31,71 @@ fn handle_transaction_result(result : Result<(), NikanError>) {
 
 fn main() {
 
-    // Struct Literal :: یعنی شما به طور مستقیم نام تک‌تک فیلدها را می‌آورید و جلویشان مقدار می‌گذارید. 
-    let org1 = Organization { id: 1, name: String::from("HelpDunya_Bremen"), active: true, };
 
-    let mut app = NikanApp::new(org1); 
-    // Encapsulation 
-    let donor1: Donor = Donor::new(101, app.organization.id, "Jim", "Vahedi", "jim@example.com");
-    let donor2 = Donor::new(102, app.organization.id, "Javad", "Vahedi", "javahedi@example.com"); 
+    let file_path = "nikan_db.json";
 
-    let donor1_id = donor1.id;
-    let donor2_id = donor2.id;
 
-    app.register_donor(donor1);
-    app.register_donor(donor2);
+    let mut app = match NikanApp::load_from_file(file_path) {
+        Ok(loaded_app) => loaded_app,
+        Err(_) => {
+            println!("File was not found in database. We are creating new one..");
+            // Struct Literal :: یعنی شما به طور مستقیم نام تک‌تک فیلدها را می‌آورید و جلویشان مقدار می‌گذارید. 
+            let org1 = Organization { id: 1, 
+                                                    name: String::from("HelpDunya_Bremen"), 
+                                                    active: true, };
+            NikanApp::new(org1)                                         
+        }
+    };
+
+    
+    if app.donors.is_empty() {
+
+        // Encapsulation 
+        let donor1: Donor = Donor::new(101, app.organization.id, "Jim", "Vahedi", "jim@example.com");
+        let donor2 = Donor::new(102, app.organization.id, "Javad", "Vahedi", "javahedi@example.com"); 
+
+        let donor1_id = donor1.id;
+        let donor2_id = donor2.id;
+
+        app.register_donor(donor1);
+        app.register_donor(donor2);
+
+        let tran1 = Transaction { id: 5001, 
+            donor_id: donor1_id, 
+            organization_id: app.organization.id,
+            amount: 550., 
+            method:PaymentMethod::Online, };
+        let tran2 = Transaction { id: 5002, 
+            donor_id: donor2_id, 
+            organization_id: app.organization.id, 
+            amount: 376.0, 
+            method:PaymentMethod::Online, };
+        let tran3 = Transaction { id: 5003, 
+            donor_id: donor1_id, 
+            organization_id: app.organization.id, 
+            amount: 243., 
+            method:PaymentMethod::Cash, };
+
+
+        handle_transaction_result(app.add_transaction(tran1));
+        handle_transaction_result(app.add_transaction(tran2));
+        handle_transaction_result(app.add_transaction(tran3));
+            
    
 
+    }
+   
+
+   
+
+    // نمایش گزارش
     app.show_report();
 
+    // ذخیره تغییرات در پایان برنامه
+    if let Err(e) = app.save_to_file(file_path) {
+        println!("❌ خطا در ذخیره‌سازی فایل: {}", e);
+    }
 
-    let tran1 = Transaction { id: 5001, 
-        donor_id: donor1_id, 
-        organization_id: app.organization.id,
-        amount: 550., 
-        method:PaymentMethod::Online, };
-    let tran2 = Transaction { id: 5002, 
-        donor_id: donor2_id, 
-        organization_id: app.organization.id, 
-        amount: 376.0, 
-        method:PaymentMethod::Online, };
-    let tran3 = Transaction { id: 5003, 
-        donor_id: donor1_id, 
-        organization_id: app.organization.id, 
-        amount: 243., 
-        method:PaymentMethod::Cash, };
-
-
-    handle_transaction_result(app.add_transaction(tran1));
-    handle_transaction_result(app.add_transaction(tran2));
-    handle_transaction_result(app.add_transaction(tran3));
-    
-
-
-    app.show_report();
 
 
 
